@@ -2,9 +2,26 @@ import time
 import random
 import mss
 import numpy as np
-import pydirectinput # Или вызовы вашего контроллера / Arduino USB
+import pyserial # Или вызовы вашего контроллера / Arduino USB
 
-pydirectinput.FAILSAFE = True
+pyserial.FAILSAFE = True
+import serial
+
+class HardwareInput:
+    def __init__(self, com_port="COM3"):
+        # Открываем связь с физической платой Arduino
+        self.ser = serial.Serial(com_port, 115200, timeout=1)
+        time.sleep(2) # Пауза на инициализацию платы
+
+    def press_key(self, key_char):
+        cmd = f"PRESS:{key_char}\n"
+        self.ser.write(cmd.encode('utf-8'))
+        # Небольшая пауза между командами
+        time.sleep(random.uniform(0.05, 0.12))
+
+# Использование в боте:
+# input_hw = HardwareInput("COM3")
+# input_hw.press_key('f')
 
 # --- 1. МОДУЛЬ ВОСПРИЯТИЯ (PERCEPTION) ---
 class Perception:
